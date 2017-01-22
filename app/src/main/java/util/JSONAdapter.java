@@ -85,7 +85,17 @@ public class JSONAdapter extends RecyclerView.Adapter<JSONAdapter.Holder> {
         View v = element.get(j.getInt("Row ID"));
 
         if (v instanceof TextView && j.has("Text"))
-            ((TextView) v).setText(String.format(j.getString("Text"), value.toString()));
+            if (value instanceof Boolean) {
+                ((TextView) v).setText(String
+                        .format(String.format( ((Boolean) value) ?
+                                        j.getString("True Text") : j.getString("False Text"),
+                                value.toString())));
+
+            } else {
+                ((TextView) v).setText(String.format(j.getString("Text"), value.toString()));
+
+            }
+
 
         if (j.has("Background"))
             v.setBackgroundColor((int) value);

@@ -14,6 +14,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import cz.msebera.android.httpclient.Header;
+import uno.lets.iotmasterapp.Calls;
 import uno.lets.iotmasterapp.MainActivity;
 import util.JSONAdapter;
 
@@ -59,7 +62,6 @@ public abstract class JSONBuilder {
 
 
             Object o = ((MainActivity) mActivity).mData.get(key);
-            Log.println(Log.ASSERT, "TEST", value.getClass().toString() + " " + o.getClass().toString());
 
             if (value.getClass().equals(o.getClass())) {
                 ((MainActivity) mActivity).mData.put(key, value);
@@ -150,6 +152,18 @@ public abstract class JSONBuilder {
 
                                             remaining.remove(j);
                                             editLayout(j.getString("Layout"), remaining);
+
+                                            break;
+
+                                        case "Send":
+                                            Calls.send(((MainActivity) mActivity).mData, new JsonHttpResponseHandler() {
+
+                                                @Override
+                                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                                    Log.println(Log.ASSERT, "TEST", response.toString());
+                                                }
+                                            });
+
 
                                             break;
 

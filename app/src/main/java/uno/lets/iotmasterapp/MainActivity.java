@@ -2,6 +2,7 @@ package uno.lets.iotmasterapp;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -46,6 +48,7 @@ import JSONParsingFactory.JSONCardViewBuilder;
 import JSONParsingFactory.JSONImageViewBuilder;
 import JSONParsingFactory.JSONRecyclerViewBuilder;
 import JSONParsingFactory.JSONTextViewBuilder;
+import cz.msebera.android.httpclient.Header;
 import util.JSONAdapter;
 
 public class MainActivity extends AppCompatActivity
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity
 
     public JSONObject mData = new JSONObject();
     public HashMap<Integer, View> mViews = new HashMap<>();
+    RelativeLayout main;
+    public boolean update = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,270 +66,43 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final RelativeLayout main = (RelativeLayout) findViewById(R.id.content_main);
+        main = (RelativeLayout) findViewById(R.id.content_main);
 
-        try {
+        Calls.getInfo(new JsonHttpResponseHandler() {
 
-            mData.put("Light0", false);
-            mData.put("Light0 Color", 0);
-            mData.put("Light1", false);
-            mData.put("Light1 Color", 0);
-            mData.put("Light2", false);
-            mData.put("Light2 Color", 0);
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-//            JSONObject json = new JSONObject();
-//            json.put("Type", "RecyclerView");
-//            json.put("Width", JSONBuilder.MATCH_PARENT);
-//            json.put("Height", JSONBuilder.MATCH_PARENT);
-//            json.put("Margin Left", 0);
-//            json.put("Margin Right", 0);
-//            json.put("Margin Top", 0);
-//            json.put("Align Parent Top", true);
-//            json.put("Align Parent Left", true);
-//            json.put("Alpha", 1);
-//            json.put("Count", 3);
-//            json.put("ID", 0);
-//
-//            JSONObject adapter = new JSONObject();
-//            adapter.put("Type", "CardView");
-//            adapter.put("Width", JSONBuilder.MATCH_PARENT);
-//            adapter.put("Height", JSONBuilder.WRAP_CONTENT);
-//            adapter.put("Margin Left", 30);
-//            adapter.put("Margin Right", 30);
-//            adapter.put("Margin Bottom", 40);
-//            adapter.put("Align Parent Top", true);
-//            adapter.put("Align Parent Left", true);
-//            adapter.put("Alpha", 1);
-//            adapter.put("Count", 3);
-//            adapter.put("ID", 1);
-//
-//            JSONArray child = new JSONArray();
-//
-//            JSONObject container = new JSONObject();
-//            container.put("Type", "RelativeLayout");
-//            container.put("Width", JSONBuilder.MATCH_PARENT);
-//            container.put("Height", JSONBuilder.WRAP_CONTENT);
-//            container.put("Margin Left", 0);
-//            container.put("Margin Right", 0);
-//            container.put("Margin Top", 0);
-//            container.put("Align Parent Top", true);
-//            container.put("Align Parent Left", true);
-//            container.put("Alpha", 1);
-//            container.put("Count", 3);
-//            container.put("ID", 2);
-//
-//            JSONArray children = new JSONArray();
-//
-//            JSONObject button = new JSONObject();
-//            button.put("Type", "Button");
-//            button.put("Name", "Button");
-//            button.put("Width", JSONBuilder.WRAP_CONTENT);
-//            button.put("Height", JSONBuilder.WRAP_CONTENT);
-//            button.put("Margin Left", 50);
-//            button.put("Margin Right", 0);
-//            button.put("Margin Top", 50);
-//            button.put("Margin Bottom", 50);
-//            button.put("Align Parent Top", true);
-//            button.put("Align Parent Left", true);
-//            button.put("Alpha", 1);
-//            button.put("ID", 3);
-//
-//            JSONObject text = new JSONObject();
-//            text.put("Type", "TextView");
-//            text.put("Name", "Text");
-//            text.put("Width", JSONBuilder.WRAP_CONTENT);
-//            text.put("Height", JSONBuilder.WRAP_CONTENT);
-//            text.put("Margin Left", 0);
-//            text.put("Margin Right", 50);
-//            text.put("Margin Top", 0);
-//            text.put("Center Vertical", true);
-//            text.put("Align Parent Right", true);
-//            text.put("Alpha", 1);
-//            text.put("ID", 4);
-//
-//            children.put(button);
-//            children.put(text);
-//
-//            container.put("Children", children);
-//
-//
-//            child.put(container);
-//
-//
-//            adapter.put("Children", child);
-//            json.put("Adapter", adapter);
+                try {
+                    mData = response.getJSONObject("Data");
+
+                    JSONObject face = response.getJSONObject("Interface");
+
+                    JSONObject container = new JSONObject();
+                    container.put("Type", "RelativeLayout");
+                    container.put("Width", JSONBuilder.MATCH_PARENT);
+                    container.put("Height", JSONBuilder.WRAP_CONTENT);
+                    container.put("Margin Left", 0);
+                    container.put("Margin Right", 0);
+                    container.put("Margin Top", 0);
+                    container.put("Align Parent Top", true);
+                    container.put("Align Parent Left", true);
+                    container.put("Alpha", 1);
+                    container.put("Count", 3);
+                    container.put("ID", 2);
 
 
-
-            JSONArray children = new JSONArray();
-            JSONObject container = new JSONObject();
-            container.put("Type", "RelativeLayout");
-            container.put("Width", JSONBuilder.MATCH_PARENT);
-            container.put("Height", JSONBuilder.WRAP_CONTENT);
-            container.put("Margin Left", 0);
-            container.put("Margin Right", 0);
-            container.put("Margin Top", 0);
-            container.put("Align Parent Top", true);
-            container.put("Align Parent Left", true);
-            container.put("Alpha", 1);
-            container.put("ID", 1);
+                    JSONBuilder builder = new JSONBuilderFactory(MainActivity.this, main).getBuilder(face);
+                    builder.Build(face);
 
 
-            JSONObject json = new JSONObject();
-            json.put("Type", "Switch");
-            json.put("Name", "Button");
-            json.put("Width", JSONBuilder.WRAP_CONTENT);
-            json.put("Height", JSONBuilder.WRAP_CONTENT);
-            json.put("Margin Left", 50);
-            json.put("Margin Right", 0);
-            json.put("Margin Top", 50);
-            json.put("Margin Bottom", 50);
-            json.put("Align Parent Top", true);
-            json.put("Align Parent Left", true);
-            json.put("Alpha", 1);
-            json.put("ID", 5);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-            JSONArray actions = new JSONArray();
-            JSONObject action1 = new JSONObject();
-            action1.put("Type", "Edit");
-            action1.put("Key", "Light%s");
-            action1.put("Order", 0);
+            }
+        });
 
-            JSONObject action2 = new JSONObject();
-            action2.put("Type", "Update");
-            action2.put("Row", "%s");
-            action2.put("Row ID", 6);
-            action2.put("ID", 2);
-            action2.put("Text", "New Value %s");
-            action2.put("Order", 1);
-
-            actions.put(action1);
-            actions.put(action2);
-            json.put("Actions", actions);
-
-
-
-            JSONObject text = new JSONObject();
-            text.put("Type", "TextView");
-            text.put("Name", "Text");
-            text.put("Width", JSONBuilder.WRAP_CONTENT);
-            text.put("Height", JSONBuilder.WRAP_CONTENT);
-            text.put("Margin Left", 50);
-            text.put("Margin Right", 100);
-            text.put("Margin Top", 100);
-            text.put("Margin Bottom", 50);
-            text.put("Align Parent Top", true);
-            text.put("Align Parent Right", true);
-            text.put("Alpha", 1);
-            text.put("ID", 6);
-
-            JSONObject text2 = new JSONObject();
-            text2.put("Type", "TextView");
-            text2.put("Name", "Text");
-            text2.put("Width", JSONBuilder.WRAP_CONTENT);
-            text2.put("Height", JSONBuilder.WRAP_CONTENT);
-            text2.put("Margin Left", 50);
-            text2.put("Margin Right", 100);
-            text2.put("Margin Top", 300);
-            text2.put("Margin Bottom", 50);
-            text2.put("Align Parent Top", true);
-            text2.put("Align Parent Right", true);
-            text2.put("Alpha", 1);
-            text2.put("ID", 7);
-
-            JSONObject button = new JSONObject();
-            button.put("Type", "Button");
-            button.put("Name", "  Change Color  ");
-            button.put("Width", JSONBuilder.WRAP_CONTENT);
-            button.put("Height", JSONBuilder.WRAP_CONTENT);
-            button.put("Margin Left", 50);
-            button.put("Margin Right", 0);
-            button.put("Margin Top", 200);
-            button.put("Margin Bottom", 50);
-            button.put("Align Parent Top", true);
-            button.put("Align Parent Left", true);
-            button.put("Alpha", 1);
-            button.put("ID", 3);
-
-            JSONObject action3 = new JSONObject();
-            action3.put("Type", "Layout");
-            action3.put("Layout", "Dialog Color");
-            action3.put("Order", 0);
-
-            JSONObject action4 = new JSONObject();
-            action4.put("Type", "Update");
-            action4.put("Row", "%s");
-            action4.put("Row ID", 3);
-            action4.put("ID", 2);
-            action4.put("Background", "%s");
-            action4.put("Order", 1);
-
-            JSONObject action5 = new JSONObject();
-            action5.put("Type", "Edit");
-            action5.put("Key", "Light%s Color");
-            action5.put("Order", 2);
-
-            JSONArray buttonActions = new JSONArray();
-            buttonActions.put(action3);
-            buttonActions.put(action4);
-            buttonActions.put(action5);
-
-
-            button.put("Actions", buttonActions);
-
-
-
-
-            children.put(json);
-            children.put(text);
-            children.put(text2);
-            children.put(button);
-
-            container.put("Children", children);
-
-
-
-
-            JSONObject card = new JSONObject();
-            card.put("Type", "CardView");
-            card.put("Width", JSONBuilder.MATCH_PARENT);
-            card.put("Height", JSONBuilder.WRAP_CONTENT);
-            card.put("Margin Left", 30);
-            card.put("Margin Right", 30);
-            card.put("Margin Bottom", 40);
-            card.put("Align Parent Top", true);
-            card.put("Align Parent Left", true);
-            card.put("Alpha", 1);
-            card.put("Count", 3);
-            card.put("ID", 0);
-
-            JSONArray kids = new JSONArray();
-            kids.put(container);
-
-            card.put("Children", kids);
-
-            JSONObject recycler = new JSONObject();
-            recycler.put("Type", "RecyclerView");
-            recycler.put("Width", JSONBuilder.MATCH_PARENT);
-            recycler.put("Height", JSONBuilder.MATCH_PARENT);
-            recycler.put("Margin Left", 0);
-            recycler.put("Margin Right", 0);
-            recycler.put("Margin Top", 0);
-            recycler.put("Align Parent Top", true);
-            recycler.put("Align Parent Left", true);
-            recycler.put("Alpha", 1);
-            recycler.put("Count", 3);
-            recycler.put("ID", 2);
-
-            recycler.put("Adapter", card);
-
-            JSONBuilder builder = new JSONBuilderFactory(this, main).getBuilder(recycler);
-            builder.Build(recycler);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -376,8 +154,109 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            update = false;
+
+            main.removeAllViews();
+
+            Calls.getInfo(new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                    try {
+                        mData = response.getJSONObject("Data");
+
+                        JSONObject face = response.getJSONObject("Interface");
+
+                        JSONObject container = new JSONObject();
+                        container.put("Type", "RelativeLayout");
+                        container.put("Width", JSONBuilder.MATCH_PARENT);
+                        container.put("Height", JSONBuilder.WRAP_CONTENT);
+                        container.put("Margin Left", 0);
+                        container.put("Margin Right", 0);
+                        container.put("Margin Top", 0);
+                        container.put("Align Parent Top", true);
+                        container.put("Align Parent Left", true);
+                        container.put("Alpha", 1);
+                        container.put("Count", 3);
+                        container.put("ID", 2);
+
+
+                        JSONBuilder builder = new JSONBuilderFactory(MainActivity.this, main).getBuilder(face);
+                        builder.Build(face);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
         } else if (id == R.id.nav_gallery) {
+            update = true;
+
+            main.removeAllViews();
+            new LongOperation().execute("");
+
+            try {
+                JSONObject json = new JSONObject();
+                json.put("Type", "RelativeLayout");
+                json.put("Name", "Test");
+                json.put("Width", JSONBuilder.MATCH_PARENT);
+                json.put("Height", JSONBuilder.MATCH_PARENT);
+                json.put("Center Horizontal", true);
+                json.put("Center Vertical", true);
+                json.put("Alpha", 1);
+                json.put("ID", 0);
+
+
+
+                JSONObject timer = new JSONObject();
+                timer.put("Type", "TextView");
+                timer.put("Name", "Time Left: X");
+                timer.put("Size", 40);
+                timer.put("Width", JSONBuilder.WRAP_CONTENT);
+                timer.put("Height", JSONBuilder.WRAP_CONTENT);
+                timer.put("Margin Left", 20);
+                timer.put("Margin Right", 20);
+                timer.put("Margin Top", 20);
+                timer.put("Margin Bottom", 20);
+                timer.put("Center Horizontal", true);
+                timer.put("Center Vertical", true);
+                timer.put("Alpha", 1);
+                timer.put("ID", 0);
+
+                JSONObject button = new JSONObject();
+                button.put("Type", "Button");
+                button.put("Name", "  +30s  ");
+                button.put("Width", JSONBuilder.WRAP_CONTENT);
+                button.put("Height", JSONBuilder.WRAP_CONTENT);
+                button.put("Margin Left", 20);
+                button.put("Margin Right", 20);
+                button.put("Margin Top", 20);
+                button.put("Margin Bottom", 20);
+                button.put("Center Horizontal", true);
+                json.put("Align Parent Top", true);
+                button.put("Alpha", 1);
+                button.put("ID", 0);
+
+
+                JSONArray children = new JSONArray();
+                children.put(timer);
+                children.put(button);
+
+
+                json.put("Children", children);
+
+
+                JSONBuilder builder = new JSONBuilderFactory(MainActivity.this, main).getBuilder(json);
+                builder.Build(json);
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -393,4 +272,36 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private class LongOperation extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
+
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(MainActivity.this, "Test", Toast.LENGTH_LONG).show();
+
+//            if (update)
+//                new LongOperation().execute("");
+
+
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+    }
+
 }

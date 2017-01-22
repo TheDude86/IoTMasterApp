@@ -7,9 +7,15 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
+import uno.lets.iotmasterapp.Calls;
+import uno.lets.iotmasterapp.MainActivity;
 
 /**
  * Created by novosejr on 1/21/2017.
@@ -51,6 +57,17 @@ public class JSONSwitchBuilder extends JSONButtonBuilder {
                                         updateValue(b, j, String.format(j.getString("Row"), Integer.toString(mRow)));
                                     else
                                         updateValue(b, j);
+
+                                    break;
+
+                                case "Send":
+                                    Calls.send(((MainActivity) mActivity).mData, new JsonHttpResponseHandler() {
+
+                                        @Override
+                                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                            Log.println(Log.ASSERT, "TEST", response.toString());
+                                        }
+                                    });
 
                                     break;
 

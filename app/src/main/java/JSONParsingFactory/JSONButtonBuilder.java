@@ -9,12 +9,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.Header;
+import uno.lets.iotmasterapp.Calls;
 import uno.lets.iotmasterapp.MainActivity;
 
 /**
@@ -71,6 +75,17 @@ public class JSONButtonBuilder extends JSONTextViewBuilder{
                                     editLayout(j.getString("Layout"), remaining);
 
                                     b = true;
+                                    break;
+
+                                case "Send":
+
+                                    Calls.send(((MainActivity) mActivity).mData, new JsonHttpResponseHandler() {
+                                        @Override
+                                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                            Log.println(Log.ASSERT, "TEST", response.toString());
+                                        }
+                                    });
+
                                     break;
 
                             }

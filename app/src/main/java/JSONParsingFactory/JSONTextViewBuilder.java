@@ -26,7 +26,7 @@ public class JSONTextViewBuilder extends JSONViewBuilder {
 
         TextView t = new TextView(mActivity);
 
-        t.setText(json.getString("Name"));
+        t.setText(String.format(json.getString("Name"), Integer.toString(mRow + 1)));
 
         if (has("Size"))
             t.setTextSize(json.getInt("Size"));
@@ -41,7 +41,7 @@ public class JSONTextViewBuilder extends JSONViewBuilder {
         TextView textView = (TextView) v;
 
         if (v instanceof TextView) {
-            textView.setText(json.getString("Name"));
+            textView.setText(String.format(json.getString("Name"), Integer.toString(mRow)));
 
             if (json.has("Size"))
                 textView.setTextSize(json.getInt("Size"));
